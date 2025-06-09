@@ -8,6 +8,12 @@
 
   boot.kernelModules = [ "iwlwifi" ];
 
+  hardware.firmware = with pkgs; [
+    linux-firmware
+    firmwareLinuxNonfree
+  ];
+  networking.wireless.enable = true;
+
   # AGX Xavier configuration
   hardware.nvidia-jetpack = {
     enable = true;
