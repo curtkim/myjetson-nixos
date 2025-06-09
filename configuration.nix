@@ -36,8 +36,9 @@
     git
     tmux
     neovim
-    nvidia-jetpack.cudaPackages.cudatoolkit
-    #nvidia-jetpack.cudaPackages.cudnn
+    claude-code
+    #nvidia-jetpack.cudaPackages.cudatoolkit
+    #cudaPackages.cudatoolkit
   ];
 
   # Basic system configuration

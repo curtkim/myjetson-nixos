@@ -15,13 +15,21 @@
 
   outputs = { self, nixpkgs, jetpack-nixos, disko, ... }@inputs: {
     nixosConfigurations = {
-      myjetson = nixpkgs.lib.nixosSystem {
+      xavier = nixpkgs.lib.nixosSystem {
         system = "aarch64-linux";
         modules = [
           disko.nixosModules.disko
           jetpack-nixos.nixosModules.default
           ./configuration.nix
           ./disko-config.nix
+          # Overlay to make nvidia-jetpack CUDA packages the default
+          {
+            nixpkgs.overlays = [
+              (final: prev: {
+                inherit (final.nvidia-jetpack) cudaPackages;
+              })
+            ];
+          }
         ];
         specialArgs = { inherit inputs; };
       };
