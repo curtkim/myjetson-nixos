@@ -23,14 +23,14 @@
   # };
 
   # Ollama with CUDA support
-  services.ollama = {
-    enable = true;
-    acceleration = "cuda";
-    environmentVariables = {
-      OLLAMA_NUM_GPU = "1";
-      CUDA_VISIBLE_DEVICES = "0";
-    };
-  };
+  # services.ollama = {
+  #   enable = true;
+  #   acceleration = "cuda";
+  #   environmentVariables = {
+  #     OLLAMA_NUM_GPU = "1";
+  #     CUDA_VISIBLE_DEVICES = "0";
+  #   };
+  # };
 
   environment.systemPackages = with pkgs; [
     git
@@ -38,7 +38,7 @@
     neovim
     claude-code
     #nvidia-jetpack.cudaPackages.cudatoolkit
-    #cudaPackages.cudatoolkit
+    cudaPackages.cudatoolkit
   ];
 
   # Basic system configuration
