@@ -39,6 +39,7 @@
     #claude-code
     #nvidia-jetpack.cudaPackages.cudatoolkit
     cudaPackages.cudatoolkit
+    python3Packages.torch
   ];
 
   # Basic system configuration
