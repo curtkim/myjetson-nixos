@@ -36,7 +36,7 @@
     git
     tmux
     neovim
-    claude-code
+    #claude-code
     #nvidia-jetpack.cudaPackages.cudatoolkit
     cudaPackages.cudatoolkit
   ];
