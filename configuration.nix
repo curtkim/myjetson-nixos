@@ -42,7 +42,7 @@
   ];
 
   # Basic system configuration
-  system.stateVersion = "25.05";
+  system.stateVersion = "24.11";
   
   # Enable SSH
   services.openssh.enable = true;
