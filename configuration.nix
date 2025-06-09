@@ -46,8 +46,8 @@
     #nvidia-jetpack.cudaPackages.cudatoolkit
     cudaPackages.cudatoolkit
     #python3Packages.torch
-    llama-cpp
-    ollama-cuda
+    #llama-cpp
+    #ollama-cuda
   ];
 
   # Basic system configuration
