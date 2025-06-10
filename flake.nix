@@ -84,13 +84,14 @@
               };
             };
 
-            # Python environment with PyTorch and CUDA support
+            # System packages including Python, monitoring tools, and convenience scripts
             environment.systemPackages = with pkgs; [
               # Python with CUDA-enabled PyTorch
               (python3.withPackages (ps: with ps; [
-                pytorch-bin  # CUDA-enabled PyTorch from jetpack
-                torchvision
-                torchaudio
+                #pytorch-bin  # CUDA-enabled PyTorch from jetpack
+                #torchvision
+                #torchaudio
+                pip
                 numpy
                 matplotlib
                 jupyter
@@ -107,8 +108,8 @@
               iotop
               
               # Jetson-specific tools (provided by jetpack-nixos)
-              jetson-gpio     # GPIO control
-              
+              nvidia-jetpack.l4t-core    # Jetson utilities including tegrastats
+ 
               # System utilities
               vim
               git
@@ -120,66 +121,8 @@
               # Network tools
               networkmanager
               wpa_supplicant
-            ];
 
-            # Enable CUDA runtime
-            hardware.opengl = {
-              enable = true;
-              driSupport = true;
-            };
-
-            # Container support with NVIDIA runtime
-            virtualisation = {
-              podman = {
-                enable = true;
-                enableNvidia = true;
-              };
-            };
-
-            # Jetson performance and power management services
-            systemd.services = {
-              # Enable jetson_clocks for maximum performance
-              jetson-clocks = {
-                description = "Jetson Clocks Performance Mode";
-                after = [ "multi-user.target" ];
-                wantedBy = [ "multi-user.target" ];
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/jetson_clocks";
-                  ExecStop = "${pkgs.nvidia-jetpack.l4t-core}/bin/jetson_clocks --restore";
-                };
-              };
-
-              # NV Power Model service
-              nvpmodel = {
-                description = "NVIDIA Power Model Service";
-                after = [ "multi-user.target" ];
-                wantedBy = [ "multi-user.target" ];
-                serviceConfig = {
-                  Type = "oneshot";
-                  RemainAfterExit = true;
-                  # Set to maximum performance mode (mode 0)
-                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/nvpmodel -m 0";
-                };
-              };
-
-              # Fan control service
-              nvfancontrol = {
-                description = "NVIDIA Fan Control Service";
-                after = [ "multi-user.target" ];
-                wantedBy = [ "multi-user.target" ];
-                serviceConfig = {
-                  Type = "simple";
-                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/nvfancontrol";
-                  Restart = "always";
-                  RestartSec = 5;
-                };
-              };
-            };
-
-            # Create convenience scripts for power management
-            environment.systemPackages = with pkgs; [
+              # Convenience scripts for power management
               (writeShellScriptBin "jetson-performance" ''
                 #!/bin/bash
                 echo "Setting Jetson to maximum performance mode..."
@@ -235,6 +178,63 @@
                 ${pkgs.nvidia-jetpack.l4t-core}/bin/nvpmodel -q
               '')
             ];
+
+            # Enable CUDA runtime
+            hardware.opengl = {
+              enable = true;
+            };
+
+            # Container support with NVIDIA runtime
+            virtualisation = {
+              podman = {
+                enable = true;
+                enableNvidia = true;
+              };
+            };
+
+            # Jetson performance and power management services
+            systemd.services = {
+              # Enable jetson_clocks for maximum performance
+              jetson-clocks = {
+                description = "Jetson Clocks Performance Mode";
+                after = [ "multi-user.target" ];
+                wantedBy = [ "multi-user.target" ];
+                serviceConfig = {
+                  Type = "oneshot";
+                  RemainAfterExit = true;
+                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/jetson_clocks";
+                  ExecStop = "${pkgs.nvidia-jetpack.l4t-core}/bin/jetson_clocks --restore";
+                };
+              };
+
+              # NV Power Model service
+              nvpmodel = {
+                description = "NVIDIA Power Model Service";
+                after = [ "multi-user.target" ];
+                wantedBy = [ "multi-user.target" ];
+                serviceConfig = {
+                  Type = "oneshot";
+                  RemainAfterExit = true;
+                  # Set to maximum performance mode (mode 0)
+                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/nvpmodel -m 0";
+                };
+              };
+
+              # Fan control service
+              nvfancontrol = {
+                description = "NVIDIA Fan Control Service";
+                after = [ "multi-user.target" ];
+                wantedBy = [ "multi-user.target" ];
+                serviceConfig = {
+                  Type = "simple";
+                  ExecStart = "${pkgs.nvidia-jetpack.l4t-core}/bin/nvfancontrol";
+                  Restart = "always";
+                  RestartSec = 5;
+                };
+              };
+            };
+
+
 
             # User configuration
             users.users.root.hashedPassword = null; # Set password manually
